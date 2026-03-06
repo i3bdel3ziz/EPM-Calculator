@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<!-- saved from url=(0069)file:///Users/AbdulazizJamal/Downloads/EPM-Calculator_V1.0/index.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>EPM Bonus Calculator</title>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<link href="./index_files/css2" rel="stylesheet">
 <style>
 /* ═══════════════════════════════════════════════
    CSS CUSTOM PROPERTIES – light & dark
@@ -969,8 +969,8 @@ tr.active-row .sal-range { color: inherit; opacity: 0.75; }
       <div class="hdr-logo">
         <div class="logo-mark">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/>
-            <polyline points="16 7 22 7 22 13"/>
+            <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
+            <polyline points="16 7 22 7 22 13"></polyline>
           </svg>
         </div>
         <div>
@@ -986,7 +986,7 @@ tr.active-row .sal-range { color: inherit; opacity: 0.75; }
       <!-- Export CSV (Functionality 3) -->
       <button class="btn" onclick="exportCSV()">
         <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M8 2v8M5 7l3 3 3-3"/><rect x="2" y="11" width="12" height="3" rx="1"/>
+          <path d="M8 2v8M5 7l3 3 3-3"></path><rect x="2" y="11" width="12" height="3" rx="1"></rect>
         </svg>
         Export CSV
       </button>
@@ -1000,8 +1000,8 @@ tr.active-row .sal-range { color: inherit; opacity: 0.75; }
     <div class="panel">
       <div class="sec-label">
         <svg class="sec-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
-          <line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
+          <line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line>
+          <line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line>
         </svg>
         Inputs
       </div>
@@ -1010,13 +1010,13 @@ tr.active-row .sal-range { color: inherit; opacity: 0.75; }
         <div class="field-label">
           <span class="field-label-inner">
             <svg class="field-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
             </svg>
             Grade Section
           </span>
         </div>
         <div class="select-wrap">
-          <select id="gradeSelect" onchange="onGradeChange()"></select>
+          <select id="gradeSelect" onchange="onGradeChange()"><option value="MMS">MMS</option></select>
         </div>
       </div>
 
@@ -1024,49 +1024,46 @@ tr.active-row .sal-range { color: inherit; opacity: 0.75; }
         <div class="field-label">
           <span class="field-label-inner">
             <svg class="field-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+              <line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
             </svg>
             Monthly Basic Salary
           </span>
           <span>QAR</span>
         </div>
-        <input type="number" id="salaryInput" value="15530" min="0" step="100"
-          oninput="calculate()" onchange="calculate()"/>
+        <input type="number" id="salaryInput" value="15530" min="0" step="100" oninput="calculate()" onchange="calculate()">
       </div>
 
       <div class="field">
         <div class="field-label">
           <span class="field-label-inner">
             <svg class="field-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+              <circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
             </svg>
             Decimal Rating
           </span>
           <span>1.0 – 5.0</span>
         </div>
-        <input type="number" id="ratingInput" value="4.0" min="1.0" max="5.0" step="0.1"
-          oninput="syncSlider()" onchange="syncSlider()"/>
+        <input type="number" id="ratingInput" value="4.0" min="1.0" max="5.0" step="0.1" oninput="syncSlider()" onchange="syncSlider()">
         <div class="slider-row">
           <span class="slider-ends">1.0</span>
-          <input type="range" id="ratingSlider" min="1.0" max="5.0" step="0.1" value="4.0"
-            oninput="syncInput()"/>
+          <input type="range" id="ratingSlider" min="1.0" max="5.0" step="0.1" value="4.0" oninput="syncInput()" class="band-low" style="--pct: 0.0%; --thumb-color: #c0392b;">
           <span class="slider-ends">5.0</span>
         </div>
 
         <!-- Validation error -->
         <div class="rating-error" id="ratingError">
           <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="8" cy="8" r="7"/><line x1="8" y1="5" x2="8" y2="8.5"/>
-            <circle cx="8" cy="11" r="0.5" fill="currentColor"/>
+            <circle cx="8" cy="8" r="7"></circle><line x1="8" y1="5" x2="8" y2="8.5"></line>
+            <circle cx="8" cy="11" r="0.5" fill="currentColor"></circle>
           </svg>
           <span id="ratingErrorText">Please enter a rating between 1.0 and 5.0</span>
         </div>
 
         <!-- Band hint -->
         <div class="band-hint" id="bandHintWrap">
-          <div class="band-hint-dot" id="bandDot"></div>
+          <div class="band-hint-dot bl" id="bandDot"></div>
           <span class="band-hint-arrow">→</span>
-          <span class="band-hint-text" id="bandHintText">—</span>
+          <span class="band-hint-text bl" id="bandHintText">Needs Development</span>
         </div>
 
         </div>
@@ -1075,11 +1072,11 @@ tr.active-row .sal-range { color: inherit; opacity: 0.75; }
     </div>
 
     <!-- Results -->
-    <div class="results-panel" id="resultsPanel">
+    <div class="results-panel band-low" id="resultsPanel">
       <div class="sec-label">
         <svg class="sec-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
-          <polyline points="17 6 23 6 23 12"/>
+          <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+          <polyline points="17 6 23 6 23 12"></polyline>
         </svg>
         Results
       </div>
@@ -1087,14 +1084,14 @@ tr.active-row .sal-range { color: inherit; opacity: 0.75; }
       <div class="result-big">
         <div class="result-big-label bonus-payment-label">
           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--ink3);flex-shrink:0">
-            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
           </svg>
           Bonus Payment
         </div>
-        <div class="result-big-value" id="bonusDisplay">
-          <span class="qar">QAR</span><span id="bonusVal">—</span>
+        <div class="result-big-value band-low pop" id="bonusDisplay">
+          <span class="qar">QAR</span><span id="bonusVal">0</span>
         </div>
-        <div class="result-context" id="resultContext"></div>
+        <div class="result-context" id="resultContext"><span class="ctx-line">No bonus applicable for this rating band</span></div>
 
         <!-- Salary breakdown chart (Functionality 4) -->
         <div class="breakdown-chart" id="breakdownChart" style="display:none">
@@ -1120,39 +1117,39 @@ tr.active-row .sal-range { color: inherit; opacity: 0.75; }
         <div class="result-row">
           <span class="result-row-k">
             <svg class="row-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/>
+              <circle cx="12" cy="8" r="6"></circle><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"></path>
             </svg>
             Performance Label
           </span>
-          <span class="result-row-v" id="perfLabel">—</span>
+          <span class="result-row-v" id="perfLabel"><span class="badge badge-0 badge-animated">Needs Development</span></span>
         </div>
         <div class="result-row">
           <span class="result-row-k">
             <svg class="row-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/>
-              <line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/>
+              <line x1="4" y1="9" x2="20" y2="9"></line><line x1="4" y1="15" x2="20" y2="15"></line>
+              <line x1="10" y1="3" x2="8" y2="21"></line><line x1="16" y1="3" x2="14" y2="21"></line>
             </svg>
             Rounded Rating
           </span>
-          <span class="result-row-v" id="roundedRating">—</span>
+          <span class="result-row-v" id="roundedRating">1</span>
         </div>
         <div class="result-row">
           <span class="result-row-k">
             <svg class="row-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+              <line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
             </svg>
             Bonus Multiple
           </span>
-          <span class="result-row-v" id="bonusMultiple">—</span>
+          <span class="result-row-v" id="bonusMultiple">0x</span>
         </div>
         <div class="result-row">
           <span class="result-row-k">
             <svg class="row-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="3" width="4" height="18" rx="1"/><rect x="10" y="8" width="4" height="13" rx="1"/><rect x="17" y="13" width="4" height="8" rx="1"/>
+              <rect x="3" y="3" width="4" height="18" rx="1"></rect><rect x="10" y="8" width="4" height="13" rx="1"></rect><rect x="17" y="13" width="4" height="8" rx="1"></rect>
             </svg>
             Rating Band
           </span>
-          <span class="result-row-v" id="ratingBand">—</span>
+          <span class="result-row-v" id="ratingBand">1.0–1.9</span>
         </div>
       </div>
     </div>
@@ -1163,34 +1160,49 @@ tr.active-row .sal-range { color: inherit; opacity: 0.75; }
     <div class="panel gauge-section">
       <div class="sec-label">
         <svg class="sec-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10"/>
-          <path d="M12 6v6l4 2"/>
+          <path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10"></path>
+          <path d="M12 6v6l4 2"></path>
         </svg>
         Rating Gauge
       </div>
       <div class="gauge-track">
-        <div class="gauge-fill" id="gaugeFill" style="width:0%"></div>
+        <div class="gauge-fill band-low" id="gaugeFill" style="width:0%"></div>
       </div>
-      <div class="gauge-ticks" id="gaugeTicks"></div>
+      <div class="gauge-ticks" id="gaugeTicks"><div class="gauge-tick active-low">
+      <div class="gauge-tick-line"></div>
+      <span>Needs</span>
+    </div><div class="gauge-tick">
+      <div class="gauge-tick-line"></div>
+      <span>Marginally</span>
+    </div><div class="gauge-tick">
+      <div class="gauge-tick-line"></div>
+      <span>Solid</span>
+    </div><div class="gauge-tick">
+      <div class="gauge-tick-line"></div>
+      <span>Exceeding</span>
+    </div><div class="gauge-tick">
+      <div class="gauge-tick-line"></div>
+      <span>Outstanding</span>
+    </div></div>
       <div style="margin-top:28px;">
         <div class="sec-label">
           <svg class="sec-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-            <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/>
-            <line x1="3" y1="10" x2="21" y2="10"/>
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
           </svg>
           Bonus Months
         </div>
-        <div class="months-grid" id="monthsDots"></div>
+        <div class="months-grid" id="monthsDots"><div class="m-dot">1</div><div class="m-dot">2</div><div class="m-dot">3</div><div class="m-dot">4</div><div class="m-dot">5</div><div class="m-dot">6</div><div class="m-dot">7</div><div class="m-dot">8</div><div class="m-dot">9</div><div class="m-dot">10</div></div>
       </div>
     </div>
 
     <div class="panel">
       <div class="sec-label">
         <svg class="sec-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="3" width="18" height="18" rx="2"/>
-          <line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/>
-          <line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/>
+          <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+          <line x1="3" y1="9" x2="21" y2="9"></line><line x1="3" y1="15" x2="21" y2="15"></line>
+          <line x1="9" y1="3" x2="9" y2="21"></line><line x1="15" y1="3" x2="15" y2="21"></line>
         </svg>
         Reference Table
       </div>
@@ -1200,7 +1212,42 @@ tr.active-row .sal-range { color: inherit; opacity: 0.75; }
             <th>Range</th><th>Rating</th><th>Label</th><th>Months</th><th>Bonus Range (QAR)</th>
           </tr>
         </thead>
-        <tbody id="refBody"></tbody>
+        <tbody id="refBody">
+    <tr class="active-row row-low">
+      <td>1.0–1.9</td>
+      <td>1</td>
+      <td><span class="badge badge-0">Needs Development</span></td>
+      <td>—</td>
+      <td><span class="sal-range">—</span></td>
+    </tr>
+    <tr class="">
+      <td>2.0–2.9</td>
+      <td>2</td>
+      <td><span class="badge badge-1">Marginally Below Target</span></td>
+      <td>—</td>
+      <td><span class="sal-range">—</span></td>
+    </tr>
+    <tr class="">
+      <td>3.0–3.7</td>
+      <td>3</td>
+      <td><span class="badge badge-2">Solid Performer</span></td>
+      <td>4</td>
+      <td><span class="sal-range">—</span></td>
+    </tr>
+    <tr class="">
+      <td>3.8–4.4</td>
+      <td>4</td>
+      <td><span class="badge badge-3">Exceeding</span></td>
+      <td>7</td>
+      <td><span class="sal-range">—</span></td>
+    </tr>
+    <tr class="">
+      <td>4.5–5.0</td>
+      <td>5</td>
+      <td><span class="badge badge-4">Outstanding</span></td>
+      <td>10</td>
+      <td><span class="sal-range">—</span></td>
+    </tr></tbody>
       </table>
     </div>
   </div>
@@ -1210,8 +1257,8 @@ tr.active-row .sal-range { color: inherit; opacity: 0.75; }
     <div class="chart-header">
       <div class="sec-label" style="margin-bottom:0">
         <svg class="sec-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/>
-          <polyline points="16 7 22 7 22 13"/>
+          <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
+          <polyline points="16 7 22 7 22 13"></polyline>
         </svg>
         Bonus Projection Chart
       </div>
@@ -1224,7 +1271,7 @@ tr.active-row .sal-range { color: inherit; opacity: 0.75; }
       </div>
     </div>
     <div class="chart-wrap" id="chartWrap">
-      <div class="chart-no-salary" id="chartNoSalary">Enter a salary to see the projection chart</div>
+      <div class="chart-no-salary" id="chartNoSalary" style="display: flex;">Enter a salary to see the projection chart</div>
       <canvas id="projectionCanvas" style="display:none"></canvas>
       <div class="chart-tooltip" id="chartTooltip"></div>
     </div>
@@ -1921,5 +1968,6 @@ window.addEventListener('resize', () => {
 });
 window.addEventListener('DOMContentLoaded', init);
 </script>
-</body>
-</html>
+
+
+</body></html>
