@@ -4,7 +4,7 @@
 
 A clean, minimalist web-based calculator for Enterprise Performance Management (EPM) bonus projections. Built as a single-file HTML application — no frameworks, no dependencies, no server required.
 
-🌐 **Live Demo:** `https://i3bdel3ziz.github.io/EPM-Calculator.`
+🌐 **Live Demo:** `https://i3bdel3ziz.github.io/EPM-Calculator`
 
 
 ---
