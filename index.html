@@ -1,0 +1,1925 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>EPM Bonus Calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+/* ═══════════════════════════════════════════════
+   CSS CUSTOM PROPERTIES – light & dark
+═══════════════════════════════════════════════ */
+:root {
+  --bg:      #f5f4f0;
+  --surface: #ffffff;
+  --line:    #e0ddd6;
+  --ink:     #1a1916;
+  --ink2:    #6b6860;
+  --ink3:    #b0ada6;
+  --r:       6px;
+
+  --c-low:         #c0392b;
+  --c-low-dim:     rgba(192,57,43,0.08);
+  --c-solid:       #1e3a5f;
+  --c-solid-dim:   rgba(30,58,95,0.08);
+  --c-exceed:      #5a8a5e;
+  --c-exceed-dim:  rgba(90,138,94,0.08);
+  --c-out:         #2d5a3d;
+  --c-out-dim:     rgba(45,90,61,0.08);
+}
+
+/* ═══════════════════════════════════════════════
+   RESET & BASE
+═══════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'IBM Plex Sans', sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 48px 24px 80px;
+  font-size: 14px;
+  transition: background 0.35s ease, color 0.35s ease;
+}
+
+.wrap { max-width: 920px; margin: 0 auto; }
+
+/* ═══════════════════════════════════════════════
+   HEADER
+═══════════════════════════════════════════════ */
+.hdr {
+  margin-bottom: 40px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 22px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.hdr-tag {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin-bottom: 10px;
+}
+
+h1 {
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: clamp(22px, 3vw, 30px);
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+h1 strong { font-weight: 500; }
+
+.hdr-meta {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--ink);
+  letter-spacing: 0.06em;
+  margin-top: 6px;
+}
+
+/* header action buttons */
+.hdr-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.15s ease, background 0.2s ease, border-color 0.2s ease;
+  white-space: nowrap;
+  background: var(--surface);
+  color: var(--ink);
+}
+
+.btn:hover { border-color: var(--ink2); color: var(--ink); }
+.btn:active { transform: scale(0.97); }
+
+.btn-primary {
+  background: var(--ink);
+  color: var(--surface);
+  border-color: var(--ink);
+}
+.btn-primary:hover { opacity: 0.82; color: var(--surface); }
+.btn-primary.copied { background: var(--ink2); border-color: var(--ink2); }
+
+/* ═══════════════════════════════════════════════
+   LAYOUT GRID
+═══════════════════════════════════════════════ */
+.cols, .bottom {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  overflow: hidden;
+}
+
+.cols { margin-bottom: 1px; }
+
+/* ── Tablet (≤ 768px) ── */
+@media (max-width: 768px) {
+  body { padding: 32px 20px 60px; }
+
+  .hdr {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+    padding-bottom: 20px;
+    margin-bottom: 28px;
+  }
+
+  .hdr-actions {
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .btn { flex: 1; justify-content: center; min-width: 120px; }
+
+  h1 { font-size: 24px; }
+
+  .cols, .bottom {
+    grid-template-columns: 1fr;
+  }
+
+  .panel, .results-panel { padding: 24px 20px; }
+
+  .result-big-value        { font-size: 32px !important; }
+  .result-big-value.band-solid  { font-size: 34px !important; }
+  .result-big-value.band-exceed { font-size: 36px !important; }
+  .result-big-value.band-out    { font-size: 38px !important; }
+
+  table { font-size: 11px; }
+  th    { font-size: 8px; padding-bottom: 8px; }
+  td    { padding: 8px 6px 8px 0; font-size: 10px; }
+
+  .badge { font-size: 9px; padding: 2px 6px; }
+
+  .months-grid { gap: 5px; }
+  .m-dot { width: 24px; height: 24px; font-size: 8px; }
+}
+
+/* ── Mobile (≤ 480px) ── */
+@media (max-width: 480px) {
+  body { padding: 24px 16px 48px; }
+
+  h1 { font-size: 20px; }
+  .hdr-tag { font-size: 9px; }
+  .hdr-meta { font-size: 9px; }
+
+  .panel, .results-panel { padding: 20px 16px; }
+
+  .btn { font-size: 9px; padding: 8px 10px; }
+
+  .result-big-value        { font-size: 28px !important; }
+  .result-big-value.band-solid  { font-size: 30px !important; }
+  .result-big-value.band-exceed { font-size: 32px !important; }
+  .result-big-value.band-out    { font-size: 34px !important; }
+
+  .ctx-line { font-size: 9px; }
+  .result-row-k { font-size: 9px; }
+  .result-row-v { font-size: 12px; }
+
+  input[type="number"], select {
+    font-size: 13px;
+    padding: 9px 10px;
+  }
+
+  .sec-label { font-size: 9px; margin-bottom: 18px; }
+
+  /* Stack table columns more comfortably */
+  th { font-size: 8px; letter-spacing: 0.06em; }
+  td { font-size: 10px; padding: 7px 4px 7px 0; }
+
+  /* Hide bonus range column on small screens — too tight */
+  th:last-child, td:last-child { display: none; }
+
+  .gauge-ticks .gauge-tick { font-size: 8px; }
+
+  .m-dot { width: 22px; height: 22px; font-size: 8px; }
+  .months-grid { gap: 4px; }
+
+  .breakdown-label { font-size: 8px; }
+  .bar-legend { gap: 10px; }
+  .bar-legend-item { font-size: 8px; }
+
+  .note { font-size: 10px; }
+  .hdr-actions { gap: 6px; }
+}
+
+.panel {
+  background: var(--surface);
+  padding: 32px 28px;
+  transition: background 0.35s ease;
+}
+
+/* results panel – accent strip */
+.results-panel {
+  background: var(--surface);
+  padding: 32px 28px;
+  position: relative;
+  transition: background 0.35s ease;
+}
+
+.results-panel::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: transparent;
+  transition: background 0.45s ease;
+}
+
+.results-panel.band-low::before    { background: var(--c-low); }
+.results-panel.band-solid::before  { background: var(--c-solid); }
+.results-panel.band-exceed::before { background: var(--c-exceed); }
+.results-panel.band-out::before    { background: var(--c-out); }
+
+/* ═══════════════════════════════════════════════
+   SECTION LABELS & FIELDS
+═══════════════════════════════════════════════ */
+.sec-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin-bottom: 24px;
+}
+
+.field { margin-bottom: 20px; }
+.field:last-of-type { margin-bottom: 0; }
+
+.field-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--ink);
+  margin-bottom: 7px;
+  display: flex;
+  justify-content: space-between;
+}
+.field-label span { color: var(--ink); }
+
+input[type="number"], select {
+  width: 100%;
+  padding: 10px 12px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  outline: none;
+  appearance: none;
+  -moz-appearance: textfield;
+  transition: border-color 0.2s ease, background 0.35s ease, color 0.35s ease;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+input[type="number"]:focus, select:focus { border-color: var(--ink); }
+
+.select-wrap { position: relative; }
+.select-wrap::after {
+  content: '↓';
+  position: absolute;
+  right: 12px; top: 50%;
+  transform: translateY(-50%);
+  font-size: 12px;
+  color: var(--ink2);
+  pointer-events: none;
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+/* ═══════════════════════════════════════════════
+   SLIDER
+═══════════════════════════════════════════════ */
+.slider-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  flex: 1;
+  height: 2px;
+  background: var(--line);
+  border: none;
+  border-radius: 1px;
+  outline: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+input[type="range"].band-low    { background: linear-gradient(to right, var(--c-low)    var(--pct,0%), var(--line) var(--pct,0%)); }
+input[type="range"].band-solid  { background: linear-gradient(to right, var(--c-solid)  var(--pct,0%), var(--line) var(--pct,0%)); }
+input[type="range"].band-exceed { background: linear-gradient(to right, var(--c-exceed) var(--pct,0%), var(--line) var(--pct,0%)); }
+input[type="range"].band-out    { background: linear-gradient(to right, var(--c-out)    var(--pct,0%), var(--line) var(--pct,0%)); }
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: var(--thumb-color, var(--ink));
+  border: none;
+  cursor: grab;
+  transition: transform 0.15s ease, background 0.4s ease;
+}
+input[type="range"]::-webkit-slider-thumb:active { transform: scale(1.3); cursor: grabbing; }
+input[type="range"]::-moz-range-thumb {
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: var(--thumb-color, var(--ink));
+  border: none; cursor: grab;
+}
+
+.slider-ends {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+/* ═══════════════════════════════════════════════
+   VALIDATION ERROR
+═══════════════════════════════════════════════ */
+.rating-error {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  padding: 8px 10px;
+  background: var(--c-low-dim);
+  border: 1px solid rgba(192,57,43,0.2);
+  border-radius: var(--r);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--c-low);
+  line-height: 1.5;
+  animation: shakeIn 0.3s ease;
+}
+.rating-error.visible { display: flex; }
+
+input[type="number"].input-error {
+  border-color: var(--c-low);
+  box-shadow: 0 0 0 3px var(--c-low-dim);
+}
+
+@keyframes shakeIn {
+  0%  { transform: translateX(-4px); opacity: 0; }
+  40% { transform: translateX(4px); }
+  70% { transform: translateX(-2px); }
+  100%{ transform: translateX(0); opacity: 1; }
+}
+
+/* ═══════════════════════════════════════════════
+   BAND HINT
+═══════════════════════════════════════════════ */
+.band-hint {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 9px;
+  min-height: 18px;
+}
+
+.band-hint-arrow { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--ink); }
+
+.band-hint-text {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--ink);
+  transition: color 0.3s ease;
+}
+.band-hint-text.bl { color: var(--c-low);    font-weight: 500; }
+.band-hint-text.bs { color: var(--c-solid);  font-weight: 500; }
+.band-hint-text.be { color: var(--c-exceed); font-weight: 500; }
+.band-hint-text.bo { color: var(--c-out);    font-weight: 500; }
+
+.band-hint-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--line);
+  transition: background 0.3s ease;
+  flex-shrink: 0;
+}
+.band-hint-dot.bl { background: var(--c-low); }
+.band-hint-dot.bs { background: var(--c-solid); }
+.band-hint-dot.be { background: var(--c-exceed); }
+.band-hint-dot.bo { background: var(--c-out); }
+
+/* ═══════════════════════════════════════════════
+   NOTE
+═══════════════════════════════════════════════ */
+.note {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  font-size: 11px;
+  color: var(--ink);
+  line-height: 1.65;
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+/* ═══════════════════════════════════════════════
+   RESULTS
+═══════════════════════════════════════════════ */
+.result-big {
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--line);
+}
+
+.result-big-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+
+.result-big-value {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: clamp(28px, 4vw, 36px);
+  font-weight: 500;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+  line-height: 1;
+  transition: font-size 0.35s cubic-bezier(0.34,1.56,0.64,1), color 0.4s ease;
+}
+
+.result-big-value.band-low    { color: var(--c-low); }
+.result-big-value.band-solid  { font-size: clamp(30px,4.2vw,39px); color: var(--c-solid); }
+.result-big-value.band-exceed { font-size: clamp(32px,4.5vw,43px); color: var(--c-exceed); }
+.result-big-value.band-out    { font-size: clamp(34px,4.8vw,48px); color: var(--c-out); }
+
+.result-big-value .qar {
+  font-size: 0.42em;
+  font-weight: 400;
+  color: var(--ink3);
+  letter-spacing: 0.08em;
+  vertical-align: super;
+  margin-right: 4px;
+}
+
+@keyframes bonusPop {
+  0%  { transform: scale(1); }
+  40% { transform: scale(1.06); }
+  100%{ transform: scale(1); }
+}
+.result-big-value.pop { animation: bonusPop 0.38s cubic-bezier(0.34,1.56,0.64,1); }
+
+@keyframes badgeIn {
+  from { opacity: 0; transform: translateX(6px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.badge-animated { animation: badgeIn 0.28s ease forwards; }
+
+.result-context {
+  margin-top: 10px;
+  min-height: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ctx-line {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--ink);
+  line-height: 1.5;
+}
+.ctx-line strong { color: var(--ink); font-weight: 500; }
+
+/* ── Salary breakdown chart (Functionality 4) ── */
+.breakdown-chart {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+
+.breakdown-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+
+.bar-track {
+  display: flex;
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--line);
+}
+
+.bar-base {
+  background: var(--ink3);
+  height: 100%;
+  transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+  border-radius: 4px 0 0 4px;
+}
+
+.bar-bonus {
+  height: 100%;
+  transition: width 0.5s cubic-bezier(0.4,0,0.2,1), background 0.45s ease;
+  border-radius: 0 4px 4px 0;
+}
+
+.bar-bonus.band-low    { background: var(--c-low); }
+.bar-bonus.band-solid  { background: var(--c-solid); }
+.bar-bonus.band-exceed { background: var(--c-exceed); }
+.bar-bonus.band-out    { background: var(--c-out); }
+
+.bar-legend {
+  display: flex;
+  gap: 16px;
+  margin-top: 7px;
+}
+
+.bar-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  color: var(--ink);
+}
+
+.bar-legend-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.result-rows { display: flex; flex-direction: column; }
+
+.result-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--line);
+}
+.result-row:last-child { border-bottom: none; }
+
+.result-row-k {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--ink);
+  text-transform: uppercase;
+}
+
+.result-row-v {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+/* ═══════════════════════════════════════════════
+   BADGES
+═══════════════════════════════════════════════ */
+.badge {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  padding: 3px 8px;
+  border-radius: 3px;
+  border: 1px solid var(--line);
+  color: var(--ink2);
+  background: var(--bg);
+  display: inline-block;
+}
+
+.badge-0, .badge-1 { color: var(--c-low);    border-color: var(--c-low);    background: var(--c-low-dim); }
+.badge-2           { color: var(--c-solid);  border-color: var(--c-solid);  background: var(--c-solid-dim); }
+.badge-3           { color: var(--c-exceed); border-color: var(--c-exceed); background: var(--c-exceed-dim); }
+.badge-4           { color: var(--c-out);    border-color: var(--c-out);    background: var(--c-out-dim); }
+
+/* ═══════════════════════════════════════════════
+   GAUGE
+═══════════════════════════════════════════════ */
+.gauge-track {
+  height: 2px;
+  background: var(--line);
+  border-radius: 1px;
+  margin: 16px 0 10px;
+  position: relative;
+  overflow: visible;
+}
+
+.gauge-fill {
+  height: 100%;
+  background: var(--ink);
+  border-radius: 1px;
+  transition: width 0.5s cubic-bezier(0.4,0,0.2,1), background 0.45s ease;
+  position: relative;
+}
+
+.gauge-fill.band-low    { background: var(--c-low); }
+.gauge-fill.band-solid  { background: var(--c-solid); }
+.gauge-fill.band-exceed { background: var(--c-exceed); }
+.gauge-fill.band-out    { background: var(--c-out); }
+
+.gauge-fill::after {
+  content: '';
+  position: absolute;
+  right: -5px; top: -4px;
+  width: 10px; height: 10px;
+  background: inherit;
+  border-radius: 50%;
+  border: 2px solid var(--surface);
+}
+
+.gauge-ticks { display: flex; justify-content: space-between; margin-top: 8px; }
+
+.gauge-tick {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  color: var(--ink);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  flex: 1;
+  transition: color 0.3s ease;
+  text-align: center;
+  line-height: 1.3;
+}
+
+.gauge-tick-line { width: 1px; height: 4px; background: var(--line); transition: background 0.3s ease; }
+.gauge-tick.active-low    { color: var(--c-low); }    .gauge-tick.active-low    .gauge-tick-line { background: var(--c-low); }
+.gauge-tick.active-solid  { color: var(--c-solid); }  .gauge-tick.active-solid  .gauge-tick-line { background: var(--c-solid); }
+.gauge-tick.active-exceed { color: var(--c-exceed); } .gauge-tick.active-exceed .gauge-tick-line { background: var(--c-exceed); }
+.gauge-tick.active-out    { color: var(--c-out); }    .gauge-tick.active-out    .gauge-tick-line { background: var(--c-out); }
+
+/* ═══════════════════════════════════════════════
+   MONTH DOTS
+═══════════════════════════════════════════════ */
+.months-grid {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+
+.m-dot {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  color: var(--ink3);
+  transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+.m-dot.on-neutral { background: var(--ink);     border-color: var(--ink);     color: var(--surface); }
+.m-dot.on-low     { background: var(--c-low);   border-color: var(--c-low);   color: var(--surface); }
+.m-dot.on-solid   { background: var(--c-solid);  border-color: var(--c-solid);  color: var(--surface); }
+.m-dot.on-exceed  { background: var(--c-exceed); border-color: var(--c-exceed); color: var(--surface); }
+.m-dot.on-out     { background: var(--c-out);    border-color: var(--c-out);    color: var(--surface); }
+
+@keyframes dotPop {
+  0%  { transform: scale(0.7); opacity: 0.4; }
+  60% { transform: scale(1.12); }
+  100%{ transform: scale(1); opacity: 1; }
+}
+.m-dot.popping { animation: dotPop 0.3s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+
+/* ═══════════════════════════════════════════════
+   REFERENCE TABLE
+═══════════════════════════════════════════════ */
+table { width: 100%; border-collapse: collapse; }
+thead tr { border-bottom: 1px solid var(--line); }
+
+th {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink);
+  padding: 0 8px 10px 0;
+  text-align: left;
+}
+
+td {
+  padding: 9px 8px 9px 0;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--ink);
+  border-bottom: 1px solid var(--line);
+  vertical-align: middle;
+}
+
+tr:last-child td { border-bottom: none; }
+
+tr.active-row.row-low    td { color: var(--c-low); }
+tr.active-row.row-solid  td { color: var(--c-solid); }
+tr.active-row.row-exceed td { color: var(--c-exceed); }
+tr.active-row.row-out    td { color: var(--c-out); }
+
+tr.active-row td:first-child { padding-left: 8px; position: relative; }
+tr.active-row td:first-child::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 2px;
+}
+
+tr.active-row.row-low    td:first-child::before { background: var(--c-low); }
+tr.active-row.row-solid  td:first-child::before { background: var(--c-solid); }
+tr.active-row.row-exceed td:first-child::before { background: var(--c-exceed); }
+tr.active-row.row-out    td:first-child::before { background: var(--c-out); }
+
+.sal-range { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--ink); }
+tr.active-row .sal-range { color: inherit; opacity: 0.75; }
+
+/* ═══════════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════════ */
+.toast {
+  position: fixed;
+  bottom: 28px; left: 50%;
+  transform: translateX(-50%) translateY(12px);
+  background: var(--ink);
+  color: var(--surface);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  padding: 10px 18px;
+  border-radius: var(--r);
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 100;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ═══════════════════════════════════════════════
+   FADE IN
+═══════════════════════════════════════════════ */
+@keyframes fadein {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.hdr    { opacity:0; animation: fadein 0.35s 0.00s ease forwards; }
+.cols   { opacity:0; animation: fadein 0.35s 0.08s ease forwards; }
+.bottom { opacity:0; animation: fadein 0.35s 0.14s ease forwards; }
+
+
+/* ── Icons ── */
+.sec-label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.sec-icon {
+  flex-shrink: 0;
+  opacity: 1;
+}
+
+.field-label-inner {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.field-icon {
+  flex-shrink: 0;
+  color: var(--ink);
+}
+
+.result-row-k {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.row-icon {
+  flex-shrink: 0;
+  color: var(--ink);
+  opacity: 1;
+}
+
+.hdr-logo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 2px;
+}
+
+.logo-mark {
+  width: 40px;
+  height: 40px;
+  background: var(--ink);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.35s ease;
+}
+
+.bonus-payment-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ═══════════════════════════════════════════════
+   BONUS PROJECTION CHART
+═══════════════════════════════════════════════ */
+.chart-panel {
+  background: var(--surface);
+  padding: 32px 28px 28px;
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  margin-top: 1px;
+  transition: background 0.35s ease;
+}
+
+.chart-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+}
+
+.chart-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  color: var(--ink);
+  letter-spacing: 0.06em;
+}
+
+.chart-legend-swatch {
+  width: 24px;
+  height: 3px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.chart-wrap {
+  position: relative;
+  width: 100%;
+}
+
+#projectionCanvas {
+  width: 100%;
+  height: auto;
+  display: block;
+  cursor: crosshair;
+}
+
+.chart-tooltip {
+  position: absolute;
+  pointer-events: none;
+  background: var(--ink);
+  color: var(--surface);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  line-height: 1.6;
+  padding: 8px 12px;
+  border-radius: var(--r);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  z-index: 10;
+  transform: translate(-50%, -110%);
+}
+
+.chart-tooltip.visible { opacity: 1; }
+
+.chart-no-salary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 180px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--ink3);
+  letter-spacing: 0.06em;
+  border: 1px dashed var(--line);
+  border-radius: var(--r);
+}
+
+@media (max-width: 480px) {
+  .chart-panel { padding: 20px 16px; }
+  .chart-legend-item { font-size: 8px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ── HEADER ── -->
+  <header class="hdr">
+    <div>
+      <div class="hdr-tag">Enterprise Performance Management</div>
+      <div class="hdr-logo">
+        <div class="logo-mark">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/>
+            <polyline points="16 7 22 7 22 13"/>
+          </svg>
+        </div>
+        <div>
+          <h1><strong>Performance Bonus</strong> Calculator</h1>
+          <div class="hdr-meta">Annual bonus projection based on performance rating</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hdr-actions">
+      <!-- Dark mode toggle (UI 5) -->
+
+      <!-- Export CSV (Functionality 3) -->
+      <button class="btn" onclick="exportCSV()">
+        <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8 2v8M5 7l3 3 3-3"/><rect x="2" y="11" width="12" height="3" rx="1"/>
+        </svg>
+        Export CSV
+      </button>
+      </div>
+  </header>
+
+  <!-- ── INPUTS + RESULTS ── -->
+  <div class="cols">
+
+    <!-- Inputs -->
+    <div class="panel">
+      <div class="sec-label">
+        <svg class="sec-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
+          <line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
+        </svg>
+        Inputs
+      </div>
+
+      <div class="field">
+        <div class="field-label">
+          <span class="field-label-inner">
+            <svg class="field-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+            </svg>
+            Grade Section
+          </span>
+        </div>
+        <div class="select-wrap">
+          <select id="gradeSelect" onchange="onGradeChange()"></select>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-label">
+          <span class="field-label-inner">
+            <svg class="field-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+            </svg>
+            Monthly Basic Salary
+          </span>
+          <span>QAR</span>
+        </div>
+        <input type="number" id="salaryInput" value="15530" min="0" step="100"
+          oninput="calculate()" onchange="calculate()"/>
+      </div>
+
+      <div class="field">
+        <div class="field-label">
+          <span class="field-label-inner">
+            <svg class="field-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+            </svg>
+            Decimal Rating
+          </span>
+          <span>1.0 – 5.0</span>
+        </div>
+        <input type="number" id="ratingInput" value="4.0" min="1.0" max="5.0" step="0.1"
+          oninput="syncSlider()" onchange="syncSlider()"/>
+        <div class="slider-row">
+          <span class="slider-ends">1.0</span>
+          <input type="range" id="ratingSlider" min="1.0" max="5.0" step="0.1" value="4.0"
+            oninput="syncInput()"/>
+          <span class="slider-ends">5.0</span>
+        </div>
+
+        <!-- Validation error -->
+        <div class="rating-error" id="ratingError">
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="8" cy="8" r="7"/><line x1="8" y1="5" x2="8" y2="8.5"/>
+            <circle cx="8" cy="11" r="0.5" fill="currentColor"/>
+          </svg>
+          <span id="ratingErrorText">Please enter a rating between 1.0 and 5.0</span>
+        </div>
+
+        <!-- Band hint -->
+        <div class="band-hint" id="bandHintWrap">
+          <div class="band-hint-dot" id="bandDot"></div>
+          <span class="band-hint-arrow">→</span>
+          <span class="band-hint-text" id="bandHintText">—</span>
+        </div>
+
+        </div>
+
+      <div class="note">Decimal rating entered exactly — no rounding applied.<br>Bonus calculated on Monthly Basic Salary only.</div>
+    </div>
+
+    <!-- Results -->
+    <div class="results-panel" id="resultsPanel">
+      <div class="sec-label">
+        <svg class="sec-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+          <polyline points="17 6 23 6 23 12"/>
+        </svg>
+        Results
+      </div>
+
+      <div class="result-big">
+        <div class="result-big-label bonus-payment-label">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--ink3);flex-shrink:0">
+            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+          </svg>
+          Bonus Payment
+        </div>
+        <div class="result-big-value" id="bonusDisplay">
+          <span class="qar">QAR</span><span id="bonusVal">—</span>
+        </div>
+        <div class="result-context" id="resultContext"></div>
+
+        <!-- Salary breakdown chart (Functionality 4) -->
+        <div class="breakdown-chart" id="breakdownChart" style="display:none">
+          <div class="breakdown-label">Annual salary breakdown</div>
+          <div class="bar-track">
+            <div class="bar-base" id="barBase" style="width:70%"></div>
+            <div class="bar-bonus" id="barBonus" style="width:30%"></div>
+          </div>
+          <div class="bar-legend">
+            <div class="bar-legend-item">
+              <div class="bar-legend-dot" style="background:var(--ink3)"></div>
+              <span id="legendBase">Base salary</span>
+            </div>
+            <div class="bar-legend-item">
+              <div class="bar-legend-dot" id="legendBonusDot" style="background:var(--ink3)"></div>
+              <span id="legendBonus">Bonus</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="result-rows">
+        <div class="result-row">
+          <span class="result-row-k">
+            <svg class="row-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/>
+            </svg>
+            Performance Label
+          </span>
+          <span class="result-row-v" id="perfLabel">—</span>
+        </div>
+        <div class="result-row">
+          <span class="result-row-k">
+            <svg class="row-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/>
+              <line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/>
+            </svg>
+            Rounded Rating
+          </span>
+          <span class="result-row-v" id="roundedRating">—</span>
+        </div>
+        <div class="result-row">
+          <span class="result-row-k">
+            <svg class="row-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+            </svg>
+            Bonus Multiple
+          </span>
+          <span class="result-row-v" id="bonusMultiple">—</span>
+        </div>
+        <div class="result-row">
+          <span class="result-row-k">
+            <svg class="row-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="4" height="18" rx="1"/><rect x="10" y="8" width="4" height="13" rx="1"/><rect x="17" y="13" width="4" height="8" rx="1"/>
+            </svg>
+            Rating Band
+          </span>
+          <span class="result-row-v" id="ratingBand">—</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── GAUGE + TABLE ── -->
+  <div class="bottom">
+    <div class="panel gauge-section">
+      <div class="sec-label">
+        <svg class="sec-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10"/>
+          <path d="M12 6v6l4 2"/>
+        </svg>
+        Rating Gauge
+      </div>
+      <div class="gauge-track">
+        <div class="gauge-fill" id="gaugeFill" style="width:0%"></div>
+      </div>
+      <div class="gauge-ticks" id="gaugeTicks"></div>
+      <div style="margin-top:28px;">
+        <div class="sec-label">
+          <svg class="sec-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+            <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/>
+            <line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+          Bonus Months
+        </div>
+        <div class="months-grid" id="monthsDots"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="sec-label">
+        <svg class="sec-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="2"/>
+          <line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/>
+          <line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/>
+        </svg>
+        Reference Table
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Range</th><th>Rating</th><th>Label</th><th>Months</th><th>Bonus Range (QAR)</th>
+          </tr>
+        </thead>
+        <tbody id="refBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── BONUS PROJECTION CHART ── -->
+  <div class="chart-panel">
+    <div class="chart-header">
+      <div class="sec-label" style="margin-bottom:0">
+        <svg class="sec-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/>
+          <polyline points="16 7 22 7 22 13"/>
+        </svg>
+        Bonus Projection Chart
+      </div>
+      <div class="chart-legend" id="chartLegend">
+        <div class="chart-legend-item"><div class="chart-legend-swatch" style="background:#c0392b"></div>Needs Development</div>
+        <div class="chart-legend-item"><div class="chart-legend-swatch" style="background:#c0392b"></div>Marginally Below</div>
+        <div class="chart-legend-item"><div class="chart-legend-swatch" style="background:#1e3a5f"></div>Solid Performer</div>
+        <div class="chart-legend-item"><div class="chart-legend-swatch" style="background:#5a8a5e"></div>Exceeding</div>
+        <div class="chart-legend-item"><div class="chart-legend-swatch" style="background:#2d5a3d"></div>Outstanding</div>
+      </div>
+    </div>
+    <div class="chart-wrap" id="chartWrap">
+      <div class="chart-no-salary" id="chartNoSalary">Enter a salary to see the projection chart</div>
+      <canvas id="projectionCanvas" style="display:none"></canvas>
+      <div class="chart-tooltip" id="chartTooltip"></div>
+    </div>
+  </div>
+
+
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ═══════════════════════════════════════════════
+   DATA
+═══════════════════════════════════════════════ */
+const GRADES = {
+  "MMS": {
+    bands: [
+      { range:"1.0–1.9", min:1.0, max:1.9, rounded:1, label:"Needs Development",       months:0  },
+      { range:"2.0–2.9", min:2.0, max:2.9, rounded:2, label:"Marginally Below Target",  months:0  },
+      { range:"3.0–3.7", min:3.0, max:3.7, rounded:3, label:"Solid Performer",          months:4  },
+      { range:"3.8–4.4", min:3.8, max:4.4, rounded:4, label:"Exceeding",                months:7  },
+      { range:"4.5–5.0", min:4.5, max:5.0, rounded:5, label:"Outstanding",              months:10 },
+    ],
+    lookup: {
+      10:0,11:0,12:0,13:0,14:0,15:0,16:0,17:0,18:0,19:0,
+      20:0,21:0,22:0,23:0,24:0,25:0,26:0,27:0,28:0,29:0,
+      30:4,  31:4.3,32:4.6,33:4.9,34:5.2,35:5.5,36:5.8,37:6.1,
+      38:6.4,39:6.7,40:7,  41:7.3,42:7.6,43:7.9,44:8.2,
+      45:8.5,46:8.8,47:9.1,48:9.4,49:9.7,50:10
+    }
+  }
+};
+
+const BAND_KEY  = ['low','low','solid','exceed','out'];
+const GAUGE_CLS = ['active-low','active-low','active-solid','active-exceed','active-out'];
+const HINT_CLS  = ['bl','bl','bs','be','bo'];
+const COLOR_VARS= { low:'--c-low', solid:'--c-solid', exceed:'--c-exceed', out:'--c-out' };
+
+const $       = id => document.getElementById(id);
+const gs      = () => GRADES[$('gradeSelect').value] || GRADES[Object.keys(GRADES)[0]];
+const getBand = (r,s) => s.bands.find(b => r >= b.min && r <= b.max) || null;
+const getMult = (r,s) => { const k = Math.round(r*10); return s.lookup[k] ?? 0; };
+const fmtQAR  = n => n.toLocaleString('en-QA',{minimumFractionDigits:0,maximumFractionDigits:0});
+
+let state   = {};
+let prevIdx = -99;
+
+/* ═══════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════ */
+function init() {
+  // Grade select
+  const sel = $('gradeSelect');
+  Object.keys(GRADES).forEach(k => {
+    const o = document.createElement('option');
+    o.value = o.textContent = k;
+    sel.appendChild(o);
+  });
+
+  // UI 6: restore from localStorage
+  const saved = loadPrefs();
+  if (saved.grade && GRADES[saved.grade]) sel.value = saved.grade;
+  if (saved.salary) $('salaryInput').value = saved.salary;
+  if (saved.rating) {
+    $('ratingInput').value  = saved.rating;
+    $('ratingSlider').value = saved.rating;
+  }
+
+  buildTable(); buildTicks(); buildDots(); calculate();
+}
+
+function onGradeChange() { buildTable(); buildTicks(); calculate(); savePrefs(); }
+
+/* ═══════════════════════════════════════════════
+   SLIDER / INPUT SYNC + VALIDATION
+═══════════════════════════════════════════════ */
+function syncSlider() {
+  const raw    = $('ratingInput').value;
+  const v      = parseFloat(raw);
+  const errEl  = $('ratingError');
+  const errTxt = $('ratingErrorText');
+  const inpEl  = $('ratingInput');
+  const hint   = $('bandHintWrap');
+
+  if (raw === '' || isNaN(v)) {
+    errEl.classList.remove('visible');
+    inpEl.classList.remove('input-error');
+    return;
+  }
+  if (v < 1.0) {
+    errTxt.textContent = 'Rating cannot be below 1.0 — please enter a value between 1.0 and 5.0';
+    errEl.classList.add('visible');
+    inpEl.classList.add('input-error');
+    hint.style.display = 'none';
+    return;
+  }
+  if (v > 5.0) {
+    errTxt.textContent = 'Rating cannot exceed 5.0 — please enter a value between 1.0 and 5.0';
+    errEl.classList.add('visible');
+    inpEl.classList.add('input-error');
+    hint.style.display = 'none';
+    return;
+  }
+
+  errEl.classList.remove('visible');
+  inpEl.classList.remove('input-error');
+  hint.style.display = '';
+  $('ratingSlider').value = v;
+  calculate();
+  savePrefs();
+}
+
+function syncInput() {
+  $('ratingInput').value = $('ratingSlider').value;
+  $('ratingError').classList.remove('visible');
+  $('ratingInput').classList.remove('input-error');
+  $('bandHintWrap').style.display = '';
+  calculate();
+  savePrefs();
+}
+
+/* ═══════════════════════════════════════════════
+   CLEAR FIELDS
+═══════════════════════════════════════════════ */
+function clearFields() {
+  $('salaryInput').value  = '';
+  $('ratingInput').value  = '';
+  $('ratingSlider').value = 1.0;
+
+  $('ratingError').classList.remove('visible');
+  $('ratingInput').classList.remove('input-error');
+  $('bandHintWrap').style.display = '';
+
+  // Reset results
+  $('bonusVal').textContent      = '—';
+  $('bonusDisplay').className    = 'result-big-value';
+  $('resultsPanel').className    = 'results-panel';
+  $('resultContext').innerHTML   = '';
+  $('perfLabel').textContent     = '—';
+  $('roundedRating').textContent = '—';
+  $('bonusMultiple').textContent = '—';
+  $('ratingBand').textContent    = '—';
+  $('breakdownChart').style.display = 'none';
+  $('gaugeFill').style.width     = '0%';
+  $('gaugeFill').className       = 'gauge-fill';
+  $('bandHintText').textContent  = '—';
+  $('bandDot').className         = 'band-hint-dot';
+  document.querySelectorAll('.gauge-tick').forEach(el => el.className = 'gauge-tick');
+  document.querySelectorAll('.m-dot').forEach(d => d.className = 'm-dot');
+  document.querySelectorAll('#refBody tr').forEach(tr => tr.className = '');
+
+  prevIdx = -99;
+  state = {};
+  savePrefs();
+  showToast('Fields cleared');
+}
+
+/* ═══════════════════════════════════════════════
+   CALCULATE
+═══════════════════════════════════════════════ */
+function calculate() {
+  const salary = parseFloat($('salaryInput').value) || 0;
+  const raw    = parseFloat($('ratingInput').value);
+  if (isNaN(raw) || raw < 1 || raw > 5) return;
+
+  const rating      = Math.round(raw * 10) / 10;
+  const s           = gs();
+  const band        = getBand(rating, s);
+  const mult        = getMult(rating, s);
+  const bonus       = salary * mult;
+  const idx         = band ? s.bands.indexOf(band) : -1;
+  const bKey        = idx >= 0 ? BAND_KEY[idx] : '';
+  const bandChanged = idx !== prevIdx;
+
+  state = { grade: $('gradeSelect').value, salary, rating, band, mult, bonus };
+  savePrefs();
+
+  // Accent strip
+  $('resultsPanel').className = 'results-panel' + (idx >= 0 ? ` band-${bKey}` : '');
+
+  // Bonus amount + F: size & color
+  const bd = $('bonusDisplay');
+  bd.className = 'result-big-value' + (idx >= 0 ? ` band-${bKey}` : '');
+  $('bonusVal').textContent = fmtQAR(bonus);
+
+  // E: pop on band change
+  if (bandChanged && idx >= 0) {
+    bd.classList.remove('pop');
+    void bd.offsetWidth;
+    bd.classList.add('pop');
+  }
+
+  // Context lines
+  const ctx = $('resultContext');
+  if (band && salary > 0 && mult > 0) {
+    const ann = salary * 12;
+    const pct = ((bonus / ann) * 100).toFixed(1);
+    ctx.innerHTML = `
+      <span class="ctx-line">Equivalent to <strong>${mult}× monthly salary</strong></span>
+      <span class="ctx-line">Annual package with bonus: <strong>QAR ${fmtQAR(ann + bonus)}</strong></span>
+      <span class="ctx-line">Bonus is <strong>${pct}%</strong> of annual basic salary</span>`;
+  } else {
+    ctx.innerHTML = `<span class="ctx-line">No bonus applicable for this rating band</span>`;
+  }
+
+  // Functionality 4: salary breakdown chart
+  const chart = $('breakdownChart');
+  if (salary > 0 && mult > 0 && band) {
+    const ann      = salary * 12;
+    const total    = ann + bonus;
+    const basePct  = (ann / total * 100).toFixed(1);
+    const bonusPct = (bonus / total * 100).toFixed(1);
+    chart.style.display = 'block';
+    $('barBase').style.width  = basePct + '%';
+    $('barBonus').style.width = bonusPct + '%';
+    $('barBonus').className   = `bar-bonus${bKey ? ` band-${bKey}` : ''}`;
+
+    const col = bKey ? getComputedStyle(document.documentElement).getPropertyValue(COLOR_VARS[bKey]).trim() : 'var(--ink3)';
+    $('legendBonusDot').style.background = col;
+
+    $('legendBase').textContent  = `Base — QAR ${fmtQAR(ann)}`;
+    $('legendBonus').textContent = `Bonus — QAR ${fmtQAR(bonus)}`;
+  } else {
+    chart.style.display = 'none';
+  }
+
+  // Performance badge (E: slide-in)
+  const perfEl = $('perfLabel');
+  if (band) {
+    perfEl.innerHTML = `<span class="badge badge-${idx}${bandChanged?' badge-animated':''}">${band.label}</span>`;
+  } else {
+    perfEl.textContent = '—';
+  }
+
+  $('roundedRating').textContent = band ? band.rounded : '—';
+  $('bonusMultiple').textContent  = mult + 'x';
+  $('ratingBand').textContent     = band ? band.range : '—';
+
+  // Gauge
+  const fill = $('gaugeFill');
+  fill.style.width = ((rating - 1) / 4 * 100) + '%';
+  fill.className   = 'gauge-fill' + (idx >= 0 ? ` band-${bKey}` : '');
+
+  document.querySelectorAll('.gauge-tick').forEach((el, i) => {
+    el.className = 'gauge-tick' + (i === idx ? ` ${GAUGE_CLS[i]}` : '');
+  });
+
+  // Slider color
+  const slider = $('ratingSlider');
+  const pctVal = ((rating - 1) / 4 * 100).toFixed(1);
+  slider.style.setProperty('--pct', pctVal + '%');
+  if (bKey && COLOR_VARS[bKey]) {
+    slider.style.setProperty('--thumb-color', getComputedStyle(document.documentElement).getPropertyValue(COLOR_VARS[bKey]).trim());
+    slider.className = `band-${bKey}`;
+  } else {
+    slider.style.setProperty('--thumb-color', getComputedStyle(document.documentElement).getPropertyValue('--ink').trim());
+    slider.className = '';
+  }
+
+  // Month dots
+  const dotCls   = idx >= 0 ? `on-${bKey}` : 'on-neutral';
+  const fullDots = Math.floor(mult);
+  document.querySelectorAll('.m-dot').forEach((d, i) => {
+    d.className = 'm-dot';
+    if (i + 1 <= fullDots) {
+      d.classList.add(dotCls);
+      if (bandChanged) {
+        d.classList.add('popping');
+        setTimeout(() => d.classList.remove('popping'), 300 + i * 30);
+      }
+    }
+  });
+
+  // Table highlight
+  document.querySelectorAll('#refBody tr').forEach((tr, i) => {
+    tr.className = i === idx ? `active-row row-${bKey}` : '';
+  });
+
+  // Band hint
+  $('bandHintText').textContent = band ? band.label : '—';
+  $('bandHintText').className   = 'band-hint-text' + (idx >= 0 ? ` ${HINT_CLS[idx]}` : '');
+  $('bandDot').className        = 'band-hint-dot'  + (idx >= 0 ? ` ${HINT_CLS[idx]}` : '');
+
+  updateSalaryRanges(salary);
+  drawProjectionChart(salary, rating);
+  prevIdx = idx;
+}
+
+/* ═══════════════════════════════════════════════
+   BUILD UI PIECES
+═══════════════════════════════════════════════ */
+function updateSalaryRanges(salary) {
+  const s = gs();
+  document.querySelectorAll('#refBody tr').forEach((tr, i) => {
+    const cell = tr.querySelector('.sal-range');
+    if (!cell) return;
+    const band = s.bands[i];
+    if (!band || band.months === 0 || salary <= 0) { cell.textContent = '—'; return; }
+    const vals = Object.entries(s.lookup)
+      .filter(([k]) => { const r = parseInt(k)/10; return r >= band.min && r <= band.max; })
+      .map(([,v]) => v);
+    const lo = Math.min(...vals), hi = Math.max(...vals);
+    cell.textContent = lo === hi ? fmtQAR(salary * lo) : `${fmtQAR(salary * lo)} – ${fmtQAR(salary * hi)}`;
+  });
+}
+
+function buildTable() {
+  const s = gs();
+  $('refBody').innerHTML = s.bands.map((b,i) => `
+    <tr>
+      <td>${b.range}</td>
+      <td>${b.rounded}</td>
+      <td><span class="badge badge-${i}">${b.label}</span></td>
+      <td>${b.months || '—'}</td>
+      <td><span class="sal-range">—</span></td>
+    </tr>`).join('');
+}
+
+function buildTicks() {
+  const s = gs();
+  $('gaugeTicks').innerHTML = s.bands.map((b,i) =>
+    `<div class="gauge-tick">
+      <div class="gauge-tick-line"></div>
+      <span>${b.label.split(' ')[0]}</span>
+    </div>`).join('');
+}
+
+function buildDots() {
+  $('monthsDots').innerHTML = Array.from({length:10}, (_,i) =>
+    `<div class="m-dot">${i+1}</div>`).join('');
+}
+
+/* ═══════════════════════════════════════════════
+   LOCAL STORAGE  (UI 6)
+═══════════════════════════════════════════════ */
+function loadPrefs() {
+  try { return JSON.parse(localStorage.getItem('epm_prefs')) || {}; }
+  catch { return {}; }
+}
+
+function savePrefs() {
+  try {
+    const p = loadPrefs();
+    p.grade  = $('gradeSelect').value;
+    p.salary = $('salaryInput').value;
+    p.rating = $('ratingInput').value;
+    localStorage.setItem('epm_prefs', JSON.stringify(p));
+  } catch {}
+}
+
+/* ═══════════════════════════════════════════════
+   EXPORT CSV  (Functionality 3)
+═══════════════════════════════════════════════ */
+function exportCSV() {
+  const { grade, salary, rating, band, mult, bonus } = state;
+  if (!salary) { showToast('Enter values first'); return; }
+
+  const ann  = salary * 12;
+  const pct  = ann > 0 ? ((bonus / ann) * 100).toFixed(1) : '0.0';
+  const date = new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+
+  const rows = [
+    ['EPM Performance Bonus Summary', ''],
+    ['Generated', date],
+    [''],
+    ['Field', 'Value'],
+    ['Grade Section',        grade || '—'],
+    ['Monthly Basic Salary', fmtQAR(salary)],
+    ['Annual Basic Salary',  fmtQAR(ann)],
+    ['Decimal Rating',       rating || '—'],
+    ['Performance Label',    band ? band.label : '—'],
+    ['Rating Band',          band ? band.range : '—'],
+    ['Bonus Multiple',       mult + 'x'],
+    ['Bonus Payment (QAR)',  fmtQAR(bonus)],
+    ['Annual Package (QAR)', fmtQAR(ann + bonus)],
+    ['Bonus % of Annual',    pct + '%'],
+  ];
+
+  const csv  = rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = `EPM_Bonus_${(grade||'').replace(/\s/g,'_')}_${new Date().toISOString().slice(0,10)}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('CSV exported');
+}
+
+
+/* ═══════════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════════ */
+let toastTimer;
+function showToast(msg) {
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+
+/* ═══════════════════════════════════════════════
+   BONUS PROJECTION CHART
+═══════════════════════════════════════════════ */
+const BAND_COLORS_HEX = ['#c0392b','#c0392b','#1e3a5f','#5a8a5e','#2d5a3d'];
+const BAND_COLORS_DIM = [
+  'rgba(192,57,43,0.07)','rgba(192,57,43,0.07)',
+  'rgba(30,58,95,0.07)','rgba(90,138,94,0.07)','rgba(45,90,61,0.07)'
+];
+
+function getBandIdxForRating(r, s) {
+  const b = s.bands.find(b => r >= b.min && r <= b.max);
+  return b ? s.bands.indexOf(b) : -1;
+}
+
+function drawProjectionChart(salary, selectedRating) {
+  const canvas  = document.getElementById('projectionCanvas');
+  const noSal   = document.getElementById('chartNoSalary');
+  const wrap    = document.getElementById('chartWrap');
+
+  if (!salary || salary <= 0) {
+    canvas.style.display = 'none';
+    noSal.style.display  = 'flex';
+    return;
+  }
+
+  canvas.style.display = 'block';
+  noSal.style.display  = 'none';
+
+  const dpr    = window.devicePixelRatio || 1;
+  const W      = wrap.clientWidth;
+  const H      = Math.round(W * 0.38);
+  canvas.width  = W * dpr;
+  canvas.height = H * dpr;
+  canvas.style.height = H + 'px';
+
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+
+  const PAD = { top: 18, right: 24, bottom: 44, left: 72 };
+  const cW  = W - PAD.left - PAD.right;
+  const cH  = H - PAD.top  - PAD.bottom;
+
+  const s       = gs();
+  const ratings = [];
+  for (let r = 10; r <= 50; r++) ratings.push(r / 10);
+
+  const bonuses  = ratings.map(r => salary * getMult(r, s));
+  const maxBonus = Math.max(...bonuses);
+  const yMax     = Math.ceil(maxBonus / 10000) * 10000 || 10000;
+
+  const xOf = r => PAD.left + ((r - 1.0) / 4.0) * cW;
+  const yOf = v => PAD.top  + cH - (v / yMax) * cH;
+
+  // ── Background band zones ──────────────────────────────────
+  s.bands.forEach((band, i) => {
+    ctx.fillStyle = BAND_COLORS_DIM[i];
+    const x1 = xOf(band.min);
+    const x2 = xOf(Math.min(band.max, 5.0)) + (band.max >= 5.0 ? 0 : 0);
+    ctx.fillRect(x1, PAD.top, x2 - x1, cH);
+  });
+
+  // ── Grid lines ────────────────────────────────────────────
+  const gridSteps = 4;
+  ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--line').trim() || '#e0ddd6';
+  ctx.lineWidth   = 1;
+
+  for (let i = 0; i <= gridSteps; i++) {
+    const y = PAD.top + (cH / gridSteps) * i;
+    ctx.beginPath();
+    ctx.setLineDash([3, 4]);
+    ctx.moveTo(PAD.left, y);
+    ctx.lineTo(PAD.left + cW, y);
+    ctx.stroke();
+
+    // Y axis labels
+    const val = yMax - (yMax / gridSteps) * i;
+    ctx.setLineDash([]);
+    ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--ink').trim() || '#1a1916';
+    ctx.font      = `500 9px 'IBM Plex Mono', monospace`;
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'middle';
+    const label = val >= 1000 ? (val/1000).toFixed(0)+'k' : val.toFixed(0);
+    ctx.fillText(label, PAD.left - 8, y);
+  }
+
+  ctx.setLineDash([]);
+
+  // ── X axis labels ─────────────────────────────────────────
+  const xTicks = [1.0,1.5,2.0,2.5,3.0,3.5,3.8,4.0,4.4,4.5,5.0];
+  const inkColor = getComputedStyle(document.documentElement).getPropertyValue('--ink').trim() || '#1a1916';
+  xTicks.forEach(r => {
+    const x = xOf(r);
+    ctx.fillStyle    = inkColor;
+    ctx.font         = `500 9px 'IBM Plex Mono', monospace`;
+    ctx.textAlign    = 'center';
+    ctx.textBaseline = 'top';
+    ctx.fillText(r.toFixed(1), x, PAD.top + cH + 8);
+    // tick mark
+    ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--line').trim() || '#e0ddd6';
+    ctx.lineWidth   = 1;
+    ctx.beginPath();
+    ctx.moveTo(x, PAD.top + cH);
+    ctx.lineTo(x, PAD.top + cH + 4);
+    ctx.stroke();
+  });
+
+  // ── Axis labels ───────────────────────────────────────────
+  ctx.save();
+  ctx.fillStyle    = inkColor;
+  ctx.font         = `500 9px 'IBM Plex Mono', monospace`;
+  ctx.textAlign    = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.translate(14, PAD.top + cH / 2);
+  ctx.rotate(-Math.PI / 2);
+  ctx.fillText('BONUS (QAR)', 0, 0);
+  ctx.restore();
+
+  ctx.fillStyle    = inkColor;
+  ctx.font         = `500 9px 'IBM Plex Mono', monospace`;
+  ctx.textAlign    = 'center';
+  ctx.textBaseline = 'bottom';
+  ctx.fillText('RATING', PAD.left + cW / 2, H - 4);
+
+  // ── Band boundary lines ───────────────────────────────────
+  const boundaries = [2.0, 3.0, 3.8, 4.5];
+  boundaries.forEach(r => {
+    const x = xOf(r);
+    ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--line').trim() || '#e0ddd6';
+    ctx.lineWidth   = 1;
+    ctx.setLineDash([]);
+    ctx.beginPath();
+    ctx.moveTo(x, PAD.top);
+    ctx.lineTo(x, PAD.top + cH);
+    ctx.stroke();
+  });
+
+  // ── Stepped area fill ─────────────────────────────────────
+  // Draw filled area under chart line, colored by band segment
+  s.bands.forEach((band, bi) => {
+    const bandRatings = ratings.filter(r => r >= band.min && r <= band.max + 0.001);
+    if (!bandRatings.length) return;
+
+    ctx.beginPath();
+    ctx.moveTo(xOf(bandRatings[0]), PAD.top + cH);
+    bandRatings.forEach(r => {
+      const bonus = salary * getMult(r, s);
+      ctx.lineTo(xOf(r), yOf(bonus));
+    });
+    ctx.lineTo(xOf(bandRatings[bandRatings.length-1]), PAD.top + cH);
+    ctx.closePath();
+
+    const grad = ctx.createLinearGradient(0, PAD.top, 0, PAD.top + cH);
+    const hex  = BAND_COLORS_HEX[bi];
+    grad.addColorStop(0,   hex + '28');
+    grad.addColorStop(1,   hex + '06');
+    ctx.fillStyle = grad;
+    ctx.fill();
+  });
+
+  // ── Chart line segments by band ───────────────────────────
+  s.bands.forEach((band, bi) => {
+    const bandRatings = ratings.filter(r => r >= band.min && r <= band.max + 0.001);
+    if (!bandRatings.length) return;
+
+    ctx.beginPath();
+    ctx.strokeStyle = BAND_COLORS_HEX[bi];
+    ctx.lineWidth   = 2.5;
+    ctx.lineJoin    = 'round';
+    ctx.lineCap     = 'round';
+    ctx.setLineDash([]);
+
+    bandRatings.forEach((r, i) => {
+      const bonus = salary * getMult(r, s);
+      if (i === 0) ctx.moveTo(xOf(r), yOf(bonus));
+      else         ctx.lineTo(xOf(r), yOf(bonus));
+    });
+    ctx.stroke();
+  });
+
+  // ── Selected rating highlight ─────────────────────────────
+  if (selectedRating && selectedRating >= 1.0 && selectedRating <= 5.0) {
+    const sx    = xOf(selectedRating);
+    const sBonus = salary * getMult(selectedRating, s);
+    const sy    = yOf(sBonus);
+    const si    = getBandIdxForRating(selectedRating, s);
+    const sColor = si >= 0 ? BAND_COLORS_HEX[si] : inkColor;
+
+    // Vertical dashed line
+    ctx.strokeStyle = sColor;
+    ctx.lineWidth   = 1.5;
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(sx, PAD.top);
+    ctx.lineTo(sx, PAD.top + cH);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Glow ring
+    ctx.beginPath();
+    ctx.arc(sx, sy, 8, 0, Math.PI * 2);
+    ctx.fillStyle = sColor + '22';
+    ctx.fill();
+
+    // Outer dot
+    ctx.beginPath();
+    ctx.arc(sx, sy, 5, 0, Math.PI * 2);
+    ctx.fillStyle   = sColor;
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth   = 2;
+    ctx.fill();
+    ctx.stroke();
+
+    // Label above dot
+    const labelText = 'QAR ' + sBonus.toLocaleString('en-QA',{maximumFractionDigits:0});
+    const lPad = 7;
+    const lW   = ctx.measureText(labelText).width + lPad * 2;
+    const lH   = 18;
+    let lx     = sx - lW / 2;
+    let ly     = sy - 22 - lH;
+    lx = Math.max(PAD.left, Math.min(lx, PAD.left + cW - lW));
+
+    ctx.fillStyle    = sColor;
+    ctx.beginPath();
+    ctx.roundRect ? ctx.roundRect(lx, ly, lW, lH, 3) : ctx.rect(lx, ly, lW, lH);
+    ctx.fill();
+
+    ctx.fillStyle    = '#ffffff';
+    ctx.font         = `500 9px 'IBM Plex Mono', monospace`;
+    ctx.textAlign    = 'left';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(labelText, lx + lPad, ly + lH / 2);
+  }
+
+  // ── Axes ──────────────────────────────────────────────────
+  ctx.strokeStyle = inkColor;
+  ctx.lineWidth   = 1;
+  ctx.setLineDash([]);
+  ctx.beginPath();
+  ctx.moveTo(PAD.left, PAD.top);
+  ctx.lineTo(PAD.left, PAD.top + cH);
+  ctx.lineTo(PAD.left + cW, PAD.top + cH);
+  ctx.stroke();
+}
+
+// ── Chart tooltip on hover ─────────────────────────────────
+(function setupChartHover() {
+  const canvas  = document.getElementById('projectionCanvas');
+  const tooltip = document.getElementById('chartTooltip');
+
+  function onMove(e) {
+    const salary = parseFloat(document.getElementById('salaryInput').value) || 0;
+    if (!salary) return;
+
+    const rect   = canvas.getBoundingClientRect();
+    const wrap   = document.getElementById('chartWrap');
+    const W      = wrap.clientWidth;
+    const H      = Math.round(W * 0.38);
+    const PAD    = { top: 18, right: 24, bottom: 44, left: 72 };
+    const cW     = W - PAD.left - PAD.right;
+
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const mx = clientX - rect.left;
+    const rating  = 1.0 + ((mx - PAD.left) / cW) * 4.0;
+
+    if (rating < 1.0 || rating > 5.0) { tooltip.classList.remove('visible'); return; }
+
+    const r = Math.round(rating * 10) / 10;
+    const s = gs();
+    const band  = getBand(r, s);
+    const mult  = getMult(r, s);
+    const bonus = salary * mult;
+
+    tooltip.innerHTML = `<strong>Rating ${r.toFixed(1)}</strong> · ${band ? band.label : '—'}<br>Bonus: QAR ${bonus.toLocaleString('en-QA',{maximumFractionDigits:0})}`;
+    tooltip.classList.add('visible');
+
+    const tipX = mx;
+    const tipY = rect.top - rect.top + PAD.top + (H - PAD.top - PAD.bottom) / 2;
+    tooltip.style.left = tipX + 'px';
+    tooltip.style.top  = (PAD.top + (H - PAD.top - PAD.bottom) * (1 - bonus / (Math.ceil(salary * 10 / 10000) * 10000)) - 30) + 'px';
+  }
+
+  canvas.addEventListener('mousemove', onMove);
+  canvas.addEventListener('touchmove', onMove, { passive: true });
+  canvas.addEventListener('mouseleave', () => tooltip.classList.remove('visible'));
+  canvas.addEventListener('touchend',   () => tooltip.classList.remove('visible'));
+})();
+
+window.addEventListener('resize', () => {
+  if (state.salary && state.rating) drawProjectionChart(state.salary, state.rating);
+});
+window.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
