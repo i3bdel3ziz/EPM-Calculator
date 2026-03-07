@@ -10,12 +10,11 @@ A clean, minimalist web-based calculator for Enterprise Performance Management (
 ---
 
 
-![Version](https://img.shields.io/badge/version-1.9-blue.svg)
+![Version](https://img.shields.io/badge/version-1.0-blue.svg)
 ![Status](https://img.shields.io/badge/status-active-success.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
-![GitHub Pages](https://img.shields.io/badge/deploy-GitHub%20Pages-222?logo=github&logoColor=white)
-![Repo Size](https://img.shields.io/github/repo-size/i3bdel3ziz/Timesheet_App)
-![Last Commit](https://img.shields.io/github/last-commit/i3bdel3ziz/Timesheet_App)
+![Repo Size](https://img.shields.io/github/repo-size/i3bdel3ziz/EPM-Calculator)
+![Last Commit](https://img.shields.io/github/last-commit/i3bdel3ziz/EPM-Calculator
 
 
 ---
