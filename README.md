@@ -14,7 +14,7 @@ A clean, minimalist web-based calculator for Enterprise Performance Management (
 ![Status](https://img.shields.io/badge/status-active-success.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Repo Size](https://img.shields.io/github/repo-size/i3bdel3ziz/EPM-Calculator)
-![Last Commit](https://img.shields.io/github/last-commit/i3bdel3ziz/EPM-Calculator
+![Last Commit](https://img.shields.io/github/last-commit/i3bdel3ziz/EPM-Calculator)
 
 
 ---
